@@ -22,12 +22,12 @@ type RoundingMode = d.RoundingMode
 
 // Rounding constants.
 const (
-	ToNearestEven = d.ToNearestEven
-	ToNearestAway = d.ToNearestAway
-	ToZero        = d.ToZero
-	AwayFromZero  = d.AwayFromZero
-	ToNegativeInf = d.ToNegativeInf
-	ToPositiveInf = d.ToPositiveInf
+	ToNearestEven RoundingMode = d.ToNearestEven
+	ToNearestAway RoundingMode = d.ToNearestAway
+	ToZero        RoundingMode = d.ToZero
+	AwayFromZero  RoundingMode = d.AwayFromZero
+	ToNegativeInf RoundingMode = d.ToNegativeInf
+	ToPositiveInf RoundingMode = d.ToPositiveInf
 )
 
 // Decimal is an immutable, arbitrary precision decimal number.
