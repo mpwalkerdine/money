@@ -2,6 +2,7 @@ package money
 
 import (
 	"fmt"
+	"testing"
 )
 
 func ExampleNominalToEffectiveRate() {
@@ -24,4 +25,45 @@ func ExampleEffectiveToNominalRate() {
 	nominal := EffectiveToNominalRate(effective, 12)
 	fmt.Print(nominal.Round(3, ToNearestAway))
 	// Output: 0.0600
+}
+
+func ExampleEffectiveToPeriodicRate() {
+	annual := Pc(10)
+	daily := EffectiveToPeriodicRate(annual, 365)
+	fmt.Print(daily.Round(6, ToNearestAway))
+	// Output: 0.000261158
+}
+
+func ExampleCompound() {
+	amount := New(1500) // £1,500
+	rate := Pm(43)      // 4.3%
+	periods := 4        // Compounded quarterly
+	duration := 6       // 6 years
+
+	final := Compound(amount, rate, duration, periods)
+	fmt.Print(final.RoundDP(2, ToNearestEven))
+	// Output: 1938.84
+}
+
+func ExampleRecompoundRate() {
+	annualQuarterly := Pc(4)
+	annualDaily := RecompoundRate(annualQuarterly, 4, 365)
+	fmt.Print(annualDaily.Round(3, ToNearestAway))
+	// Output: 0.0398
+}
+
+func TestEffectiveToPeriodicRate(t *testing.T) {
+	principle := New(10000)
+	annual := Pc(10)
+	daily := EffectiveToPeriodicRate(annual, 365)
+	expected := principle.Mul(annual.AddInt(1))
+
+	actual := principle
+	for i := 0; i < 365; i++ {
+		actual = actual.Mul(daily.AddInt(1)).RoundDP(3, ToNearestEven)
+	}
+
+	if !actual.Equals(expected) {
+		t.Errorf("expected %v, got %v", expected, actual)
+	}
 }
