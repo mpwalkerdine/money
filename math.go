@@ -8,13 +8,8 @@ import (
 
 // RoundDP rounds the decimal to the specified number of decimal places.
 func (d Decimal) RoundDP(dp int, mode RoundingMode) Decimal {
-	r := zero().Set(d.value)
-
-	r.Context.RoundingMode = mode
-	r.Quantize(dp)
-	r.Context.RoundingMode = d.value.Context.RoundingMode
-
-	return wrap(r)
+	sigfigs := d.value.Precision() - d.value.Scale() + dp
+	return d.Round(sigfigs, mode)
 }
 
 // Round rounds the decimal to the specified number of significant figures.
