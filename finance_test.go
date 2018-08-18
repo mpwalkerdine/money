@@ -10,3 +10,11 @@ func ExampleNominalToEffectiveRate() {
 	fmt.Print(monthly.Round(3, ToNearestAway))
 	// Output: 0.0617
 }
+
+func ExampleNominalToRealRate() {
+	annual := Pc(8)
+	inflation := Pc(8)
+	real := NominalToRealRate(annual, inflation)
+	fmt.Print(real)
+	// Output: 0
+}
