@@ -34,13 +34,13 @@ func ExampleEffectiveToPeriodicRate() {
 	// Output: 0.000261158
 }
 
-func ExampleCompound() {
+func ExampleFutureValue() {
 	amount := New(1500) // £1,500
 	rate := Pm(43)      // 4.3%
 	periods := 4        // Compounded quarterly
 	duration := 6       // 6 years
 
-	final := Compound(amount, rate, duration, periods)
+	final := FutureValue(amount, rate, duration, periods)
 	fmt.Print(final.RoundDP(2, ToNearestEven))
 	// Output: 1938.84
 }

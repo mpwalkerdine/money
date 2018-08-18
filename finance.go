@@ -20,8 +20,8 @@ func EffectiveToPeriodicRate(rate Decimal, periods int) Decimal {
 	return rate.AddInt(1).PowFrac(1, periods).SubInt(1)
 }
 
-// Compound calculates amount * (1+rate/periods)^(duration*periods).
-func Compound(amount, rate Decimal, duration, periods int) Decimal {
+// FutureValue calculates amount * (1+rate/periods)^(duration*periods).
+func FutureValue(amount, rate Decimal, duration, periods int) Decimal {
 	return amount.Mul(rate.Div(NewInt(periods)).AddInt(1).PowInt(duration * periods))
 }
 
