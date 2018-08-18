@@ -9,3 +9,8 @@ func NominalToEffectiveRate(rate Decimal, periods int) Decimal {
 func NominalToRealRate(rate, inflation Decimal) Decimal {
 	return rate.AddInt(1).Div(inflation.AddInt(1)).SubInt(1)
 }
+
+// EffectiveToNominalRate calculates ((1+rate)^(1/periods) - 1) * periods = eff
+func EffectiveToNominalRate(rate Decimal, periods int) Decimal {
+	return rate.AddInt(1).PowFrac(1, periods).SubInt(1).Mul(NewInt(periods))
+}
