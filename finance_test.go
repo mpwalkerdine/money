@@ -52,6 +52,24 @@ func ExampleRecompoundRate() {
 	// Output: 0.0398
 }
 
+func ExampleFutureValueOrdinaryAnnuity() {
+	amountPerPeriod := New(1000)
+	rate := Pc(5)
+	periods := 5
+	result := FutureValueOrdinaryAnnuity(amountPerPeriod, rate, periods)
+	fmt.Printf("%.2f", result)
+	// Output: 5525.63
+}
+
+func ExampleFutureValueAnnuityDue() {
+	amountPerPeriod := New(1000)
+	rate := Pc(5)
+	periods := 5
+	result := FutureValueAnnuityDue(amountPerPeriod, rate, periods)
+	fmt.Printf("%.2f", result)
+	// Output: 5801.91
+}
+
 func TestEffectiveToPeriodicRate(t *testing.T) {
 	principle := New(10000)
 	annual := Pc(10)
