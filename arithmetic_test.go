@@ -39,8 +39,8 @@ func ExampleDecimal_Mul() {
 func ExampleDecimal_Div() {
 	a := New(1)
 	b := New(3)
-	fmt.Print(a.Div(b))
-	// Output: 0.3333333333333333333333333333333334
+	fmt.Printf("%.5f", a.Div(b))
+	// Output: 0.33333
 }
 
 func TestMul(t *testing.T) {

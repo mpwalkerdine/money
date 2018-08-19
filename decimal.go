@@ -56,13 +56,18 @@ func Pm(v int64) Decimal { return decr(v, 3) }
 // Bp creates a new "Basis Point" / permyriad decimal i.e. 4‱ = Bp(4) = 0.0004.
 func Bp(v int64) Decimal { return decr(v, 4) }
 
-// String returns a string representation of the decimal.
-func (d Decimal) String() string {
-	s := d.value.String()
-	if strings.ContainsAny(s, "eE") {
-		return fmt.Sprintf("%f", d.value)
+// Format implements the fmt.Formatter interface.
+// Verbs are the same as for the underlying decimal.Big, except %v and %d are the same as %f.
+// If a precision is requested for negative scale decimals, these are appended.
+func (d Decimal) Format(s fmt.State, c rune) {
+	if strings.ContainsRune("vd", c) {
+		c = 'f'
 	}
-	return s
+	d.value.Format(s, c)
+
+	if prec, hasPrec := s.Precision(); hasPrec && d.value.Scale() < 0 {
+		fmt.Fprintf(s, ".%s", strings.Repeat("0", prec))
+	}
 }
 
 // Equals returns true if the two numbers represent the same value.

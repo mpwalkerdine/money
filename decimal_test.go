@@ -40,3 +40,40 @@ func ExampleDecimal_Equals() {
 	fmt.Print(a.Equals(b))
 	// Output: true
 }
+
+func ExampleDecimal_Format() {
+	n := 0
+	print := func(format string, d Decimal) {
+		n++
+		fmt.Printf("%2d) "+format+"\n", n, d)
+	}
+
+	print("%s", NewCents(123))
+	print("%s", NewScalar(2345, -6))
+	print("%v", NewScalar(2345, -6))
+	print("%s", NewScalar(3, 9))
+	print("%.1f", NewCents(4567))
+	print("%.2f", New(5678))
+	print("%.4f", NewCents(6789))
+	print("`%5.2f`", New(7).Div(New(3)))
+	print("'%-10.f'", NewCents(-80808))
+	print("%.2f", NewScalar(9, 0))
+	print("%.2f", NewScalar(10, 2))
+	print("%.2f", NewScalar(11, -2))
+	print("%.2f", NewScalar(12, 4))
+
+	// Output:
+	//  1) 1.23
+	//  2) 2.345e+9
+	//  3) 2345000000
+	//  4) 3e-9
+	//  5) 45.7
+	//  6) 5678.00
+	//  7) 67.8900
+	//  8) ` 2.33`
+	//  9) '-808      '
+	// 10) 9.00
+	// 11) 0.10
+	// 12) 1100.00
+	// 13) 0.00
+}
