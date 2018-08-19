@@ -2,6 +2,7 @@ package money
 
 import (
 	"fmt"
+	"testing"
 )
 
 func ExampleNew() {
@@ -42,38 +43,51 @@ func ExampleDecimal_Equals() {
 }
 
 func ExampleDecimal_Format() {
-	n := 0
 	print := func(format string, d Decimal) {
-		n++
-		fmt.Printf("%2d) "+format+"\n", n, d)
+		fmt.Printf(format+"\n", d)
 	}
 
 	print("%s", NewCents(123))
 	print("%s", NewScalar(2345, -6))
 	print("%v", NewScalar(2345, -6))
-	print("%s", NewScalar(3, 9))
-	print("%.1f", NewCents(4567))
 	print("%.2f", New(5678))
-	print("%.4f", NewCents(6789))
 	print("`%5.2f`", New(7).Div(New(3)))
 	print("'%-10.f'", NewCents(-80808))
-	print("%.2f", NewScalar(9, 0))
-	print("%.2f", NewScalar(10, 2))
-	print("%.2f", NewScalar(11, -2))
-	print("%.2f", NewScalar(12, 4))
 
 	// Output:
-	//  1) 1.23
-	//  2) 2.345e+9
-	//  3) 2345000000
-	//  4) 3e-9
-	//  5) 45.7
-	//  6) 5678.00
-	//  7) 67.8900
-	//  8) ` 2.33`
-	//  9) '-808      '
-	// 10) 9.00
-	// 11) 0.10
-	// 12) 1100.00
-	// 13) 0.00
+	// 1.23
+	// 2.345e+9
+	// 2345000000
+	// 5678.00
+	// ` 2.33`
+	// '-808      '
+}
+
+func TestDecimalFormat(t *testing.T) {
+	tests := []struct {
+		fs   string
+		d    Decimal
+		want string
+	}{
+		{"%s", NewCents(123), "1.23"},
+		{"%s", NewScalar(2345, -6), "2.345e+9"},
+		{"%v", NewScalar(2345, -6), "2345000000"},
+		{"%s", NewScalar(3, 9), "3e-9"},
+		{"%.1f", NewCents(4567), "45.7"},
+		{"%.2f", New(5678), "5678.00"},
+		{"%.4f", NewCents(6789), "67.8900"},
+		{"`%5.2f`", New(7).Div(New(3)), "` 2.33`"},
+		{"'%-10.f'", NewCents(-80808), "'-808      '"},
+		{"%.2f", NewScalar(9, 0), "9.00"},
+		{"%.2f", NewScalar(10, 2), "0.10"},
+		{"%.2f", NewScalar(11, -2), "1100.00"},
+		{"%.2f", NewScalar(12, 4), "0.00"},
+	}
+
+	for _, tc := range tests {
+		got := fmt.Sprintf(tc.fs, tc.d)
+		if got != tc.want {
+			t.Errorf("\n got: %v\nwant: %v\n", got, tc.want)
+		}
+	}
 }
