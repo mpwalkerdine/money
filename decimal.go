@@ -69,7 +69,7 @@ func (d Decimal) Format(s fmt.State, c rune) {
 	}
 	d.value.Format(s, c)
 
-	if prec, hasPrec := s.Precision(); hasPrec && d.value.Scale() < 0 || d.value.Cmp(zero()) == 0 {
+	if prec, hasPrec := s.Precision(); hasPrec && (d.value.Scale() < 0 || d.value.Cmp(zero()) == 0) {
 		fmt.Fprintf(s, ".%s", strings.Repeat("0", prec))
 	}
 }
