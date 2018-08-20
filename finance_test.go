@@ -17,7 +17,7 @@ func ExampleNominalToRealRate() {
 	inflation := Pc(8)
 	real := NominalToRealRate(nominal, inflation)
 	fmt.Print(real)
-	// Output: 0
+	// Output: 0.00
 }
 
 func ExampleEffectiveToNominalRate() {

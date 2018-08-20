@@ -64,7 +64,7 @@ func ExampleDecimal_Format() {
 }
 
 func TestDecimalFormat(t *testing.T) {
-	tests := []struct {
+	for i, tc := range []struct {
 		fs   string
 		d    Decimal
 		want string
@@ -82,12 +82,13 @@ func TestDecimalFormat(t *testing.T) {
 		{"%.2f", NewScalar(10, 2), "0.10"},
 		{"%.2f", NewScalar(11, -2), "1100.00"},
 		{"%.2f", NewScalar(12, 4), "0.00"},
-	}
-
-	for _, tc := range tests {
+		{"%.2f", Decimal{}, "0.00"},
+		{"%.2f", decr(0, 0), "0.00"},
+		{"%.2f", decr(1, 0), "1.00"},
+	} {
 		got := fmt.Sprintf(tc.fs, tc.d)
 		if got != tc.want {
-			t.Errorf("\n got: %v\nwant: %v\n", got, tc.want)
+			t.Errorf("%d\n got: %v\nwant: %v\n", i, got, tc.want)
 		}
 	}
 }
