@@ -53,6 +53,7 @@ func ExampleDecimal_Format() {
 	print("%.2f", New(5678))
 	print("`%5.2f`", New(7).Div(New(3)))
 	print("'%-10.f'", NewCents(-80808))
+	print("%.2c", Pm(25))
 
 	// Output:
 	// 1.23
@@ -61,6 +62,7 @@ func ExampleDecimal_Format() {
 	// 5678.00
 	// ` 2.33`
 	// '-808      '
+	// 2.50%
 }
 
 func TestDecimalFormat(t *testing.T) {

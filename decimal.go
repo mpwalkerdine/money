@@ -58,6 +58,7 @@ func Bp(v int64) Decimal { return decr(v, 4) }
 
 // Format implements the fmt.Formatter interface.
 // Verbs are the same as for the underlying decimal.Big, except %v and %d are the same as %f.
+// %c will multiply by 100, use %f and append '%'.
 // If a precision is requested for negative scale decimals, these are appended.
 func (d Decimal) Format(s fmt.State, c rune) {
 	if d.value == nil || d.value.Cmp(zero()) == 0 {
@@ -65,9 +66,16 @@ func (d Decimal) Format(s fmt.State, c rune) {
 		d.value = new(eld.Big)
 	}
 
-	if strings.ContainsRune("vd", c) {
+	if c == 'c' {
+		defer fmt.Fprint(s, "%")
+		pc := new(eld.Big)
+		d.value = pc.Set(d.value).Mul(pc, eld.New(100, 0))
+	}
+
+	if strings.ContainsRune("vdc", c) {
 		c = 'f'
 	}
+
 	d.value.Format(s, c)
 
 	if prec, hasPrec := s.Precision(); hasPrec && d.value.Scale() < 0 {
