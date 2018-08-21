@@ -42,6 +42,11 @@ func ExampleDecimal_Equals() {
 	// Output: true
 }
 
+func ExampleDecimal_LessThan() {
+	fmt.Print(New(1).LessThan(NewCents(100)))
+	// Output: false
+}
+
 func ExampleDecimal_Format() {
 	print := func(format string, d Decimal) {
 		fmt.Printf(format+"\n", d)

@@ -88,6 +88,11 @@ func (d Decimal) Equals(other Decimal) bool {
 	return !d.value.IsNaN(0) && !other.value.IsNaN(0) && d.value.Cmp(other.value) == 0
 }
 
+// LessThan than returns true if the receiver is less than the argument.
+func (d Decimal) LessThan(other Decimal) bool {
+	return !d.value.IsNaN(0) && !other.value.IsNaN(0) && d.value.Cmp(other.value) < 0
+}
+
 func zero() dec {
 	z := new(eld.Big)
 	z.Context = eld.Context128
