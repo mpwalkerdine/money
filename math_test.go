@@ -28,3 +28,8 @@ func ExampleDecimal_PowFrac() {
 	fmt.Print(New(27).PowFrac(1, 3).RoundDP(2, ToNearestEven))
 	// Output: 3.00
 }
+
+func ExampleMax() {
+	fmt.Print(Max(New(1), NewCents(200), NewInt(1)))
+	// Output: 2.00
+}
