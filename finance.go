@@ -19,6 +19,13 @@ func NominalToRealRate(rate, inflation Decimal) Decimal {
 	return rate.AddInt(1).Div(inflation.AddInt(1)).SubInt(1)
 }
 
+// RealToNominalRate calculates (rate + 1)(1+inflation) - 1 (Fisher equation).
+//
+// A nominal rate in this context is the "before inflation rate".
+func RealToNominalRate(rate, inflation Decimal) Decimal {
+	return rate.AddInt(1).Mul(inflation.AddInt(1)).SubInt(1)
+}
+
 // EffectiveToNominalRate calculates ((1+rate)^(1/periods) - 1) * periods.
 //
 // This is the inverse of NominalToEffectiveRate.

@@ -13,15 +13,23 @@ func ExampleNominalToEffectiveRate() {
 }
 
 func ExampleNominalToRealRate() {
-	nominal := Pc(8)
-	inflation := Pc(8)
+	nominal := Bp(521)  // 5.21%
+	inflation := Pm(25) // 2.50%
 	real := NominalToRealRate(nominal, inflation)
-	fmt.Print(real)
-	// Output: 0
+	fmt.Print(real.Round(3, ToNearestAway))
+	// Output: 0.0264
+}
+
+func ExampleRealToNominalRate() {
+	real := Bp(264)     // 2.64%
+	inflation := Pm(25) // 2.50%
+	nominal := RealToNominalRate(real, inflation)
+	fmt.Print(nominal.Round(3, ToNearestAway))
+	// Output: 0.0521
 }
 
 func ExampleEffectiveToNominalRate() {
-	effective := Bp(617)
+	effective := Bp(617) // 6.17%
 	nominal := EffectiveToNominalRate(effective, 12)
 	fmt.Print(nominal.Round(3, ToNearestAway))
 	// Output: 0.0600
@@ -53,18 +61,18 @@ func ExampleRecompoundRate() {
 }
 
 func ExampleFutureValueOrdinaryAnnuity() {
-	amountPerPeriod := New(1000)
-	rate := Pc(5)
-	periods := 5
+	amountPerPeriod := New(1000) // £1000 at the end of each year
+	rate := Pc(5)                // 5% PA
+	periods := 5                 // 5 years
 	result := FutureValueOrdinaryAnnuity(amountPerPeriod, rate, periods)
 	fmt.Printf("%.2f", result)
 	// Output: 5525.63
 }
 
 func ExampleFutureValueAnnuityDue() {
-	amountPerPeriod := New(1000)
-	rate := Pc(5)
-	periods := 5
+	amountPerPeriod := New(1000) // £1000 at the start of each year
+	rate := Pc(5)                // 5% PA
+	periods := 5                 // 5 years
 	result := FutureValueAnnuityDue(amountPerPeriod, rate, periods)
 	fmt.Printf("%.2f", result)
 	// Output: 5801.91
