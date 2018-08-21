@@ -12,22 +12,22 @@ import (
 	"fmt"
 	"strings"
 
-	d "github.com/ericlagergren/decimal"
+	eld "github.com/ericlagergren/decimal"
 )
 
-type dec = *d.Big
+type dec = *eld.Big
 
 // RoundingMode determines how rounding is performed.
-type RoundingMode = d.RoundingMode
+type RoundingMode = eld.RoundingMode
 
 // Rounding constants.
 const (
-	ToNearestEven RoundingMode = d.ToNearestEven
-	ToNearestAway RoundingMode = d.ToNearestAway
-	ToZero        RoundingMode = d.ToZero
-	AwayFromZero  RoundingMode = d.AwayFromZero
-	ToNegativeInf RoundingMode = d.ToNegativeInf
-	ToPositiveInf RoundingMode = d.ToPositiveInf
+	ToNearestEven RoundingMode = eld.ToNearestEven
+	ToNearestAway RoundingMode = eld.ToNearestAway
+	ToZero        RoundingMode = eld.ToZero
+	AwayFromZero  RoundingMode = eld.AwayFromZero
+	ToNegativeInf RoundingMode = eld.ToNegativeInf
+	ToPositiveInf RoundingMode = eld.ToPositiveInf
 )
 
 // Decimal is an immutable, arbitrary precision decimal number.
@@ -60,8 +60,9 @@ func Bp(v int64) Decimal { return decr(v, 4) }
 // Verbs are the same as for the underlying decimal.Big, except %v and %d are the same as %f.
 // If a precision is requested for negative scale decimals, these are appended.
 func (d Decimal) Format(s fmt.State, c rune) {
-	if d.value == nil {
-		d.value = zero()
+	if d.value == nil || d.value.Cmp(zero()) == 0 {
+		// Handle special-case zero, we don't want Go operating mode treatment.
+		d.value = new(eld.Big)
 	}
 
 	if strings.ContainsRune("vd", c) {
@@ -69,7 +70,7 @@ func (d Decimal) Format(s fmt.State, c rune) {
 	}
 	d.value.Format(s, c)
 
-	if prec, hasPrec := s.Precision(); hasPrec && (d.value.Scale() < 0 || d.value.Cmp(zero()) == 0) {
+	if prec, hasPrec := s.Precision(); hasPrec && d.value.Scale() < 0 {
 		fmt.Fprintf(s, ".%s", strings.Repeat("0", prec))
 	}
 }
@@ -80,9 +81,9 @@ func (d Decimal) Equals(other Decimal) bool {
 }
 
 func zero() dec {
-	z := new(d.Big)
-	z.Context = d.Context128
-	z.Context.OperatingMode = d.Go
+	z := new(eld.Big)
+	z.Context = eld.Context128
+	z.Context.OperatingMode = eld.Go
 	return z
 }
 

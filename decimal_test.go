@@ -85,6 +85,9 @@ func TestDecimalFormat(t *testing.T) {
 		{"%.2f", Decimal{}, "0.00"},
 		{"%.2f", decr(0, 0), "0.00"},
 		{"%.2f", decr(1, 0), "1.00"},
+		{"%5.2f", Decimal{}, " 0.00"},
+		{"%5.2f", decr(0, 0), " 0.00"},
+		{"%5.2f", decr(1, 0), " 1.00"},
 	} {
 		got := fmt.Sprintf(tc.fs, tc.d)
 		if got != tc.want {
