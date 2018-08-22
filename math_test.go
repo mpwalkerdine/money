@@ -2,6 +2,7 @@ package money
 
 import (
 	"fmt"
+	"testing"
 )
 
 func ExampleDecimal_RoundDP() {
@@ -32,4 +33,21 @@ func ExampleDecimal_PowFrac() {
 func ExampleMax() {
 	fmt.Print(Max(New(1), NewCents(200), NewInt(1)))
 	// Output: 2.00
+}
+
+func TestDecimal_RoundDP(t *testing.T) {
+	for n, tc := range []struct {
+		d    Decimal
+		dp   int
+		mode RoundingMode
+		w    Decimal
+	}{
+		{NewScalar(1, -5), 2, ToNearestEven, NewScalar(1, -5)},
+		{NewScalar(1, 5), 2, ToNearestEven, NewScalar(1, 5)},
+	} {
+		got := tc.d.RoundDP(tc.dp, tc.mode)
+		if !got.Equals(tc.w) {
+			t.Errorf("#%d wanted %v, got %v", n, tc.w, got)
+		}
+	}
 }

@@ -9,6 +9,9 @@ import (
 // RoundDP rounds the decimal to the specified number of decimal places.
 func (d Decimal) RoundDP(dp int, mode RoundingMode) Decimal {
 	sigfigs := d.value.Precision() - d.value.Scale() + dp
+	if sigfigs < 0 {
+		return d
+	}
 	return d.Round(sigfigs, mode)
 }
 
