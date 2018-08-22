@@ -57,16 +57,18 @@ func RecompoundRate(rate Decimal, current, new int) Decimal {
 	return rate.Div(NewInt(current)).AddInt(1).PowFrac(current, new).SubInt(1).Mul(NewInt(new))
 }
 
-// FutureValueOrdinaryAnnuity calculates amountPerPeriod * [ ((1+rate)^period - 1) / rate ].
+// FutureValueOrdinaryAnnuity calculates amountPerPeriod * [ ((1+rate)^periods - 1) / rate ].
 //
 // This is the accumulated value when payments are made at the end of each period.
+// Note that rate should be per period.
 func FutureValueOrdinaryAnnuity(amountPerPeriod, rate Decimal, periods int) Decimal {
 	return amountPerPeriod.Mul(rate.AddInt(1).PowInt(periods).SubInt(1).Div(rate))
 }
 
-// FutureValueAnnuityDue calculates amountPerPeriod * [ ((1+rate)^period - 1) / rate ] * (1+rate).
+// FutureValueAnnuityDue calculates amountPerPeriod * [ ((1+rate)^periods - 1) / rate ] * (1+rate).
 //
 // This is the accumulated value when payments are made at the beginning of each period.
+// Note that rate should be per period.
 func FutureValueAnnuityDue(amountPerPeriod, rate Decimal, periods int) Decimal {
 	return FutureValueOrdinaryAnnuity(amountPerPeriod, rate, periods).Mul(rate.AddInt(1))
 }
