@@ -90,7 +90,14 @@ func (d Decimal) Equals(other Decimal) bool {
 
 // LessThan than returns true if the receiver is less than the argument.
 func (d Decimal) LessThan(other Decimal) bool {
-	return !d.value.IsNaN(0) && !other.value.IsNaN(0) && d.value.Cmp(other.value) < 0
+	v, o := d.value, other.value
+	if v == nil {
+		v = zero()
+	}
+	if o == nil {
+		o = zero()
+	}
+	return !v.IsNaN(0) && !o.IsNaN(0) && v.Cmp(o) < 0
 }
 
 func zero() dec {

@@ -1,0 +1,13 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "coverage",
+            "type": "shell",
+            "command": "go test -coverprofile=coverage.out && go tool cover -html=coverage.out",
+            "problemMatcher": [
+                "$go"
+            ]
+        }
+    ]
+}
