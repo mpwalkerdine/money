@@ -17,7 +17,7 @@ func (d Decimal) RoundDP(dp int, mode RoundingMode) Decimal {
 
 // Round rounds the decimal to the specified number of significant figures.
 func (d Decimal) Round(sigfigs int, mode RoundingMode) Decimal {
-	r := zero().Set(d.value)
+	r := zero().Copy(d.value)
 
 	r.Context.RoundingMode = mode
 	r.Round(sigfigs)
