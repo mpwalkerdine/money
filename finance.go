@@ -72,3 +72,12 @@ func FutureValueOrdinaryAnnuity(amountPerPeriod, rate Decimal, periods int) Deci
 func FutureValueAnnuityDue(amountPerPeriod, rate Decimal, periods int) Decimal {
 	return FutureValueOrdinaryAnnuity(amountPerPeriod, rate, periods).Mul(rate.AddInt(1))
 }
+
+// Deflate calculates amount / (1 + inflation)^periods.
+//
+// This expresses a future value (after the given number of periods) in today's money.
+// The inflation rate must be per unit of period
+// i.e. if periods is 5 years, inflation must be per annum e.g. 0.05 for 5% pa.
+func Deflate(amount, inflation Decimal, periods int) Decimal {
+	return amount.Div(inflation.AddInt(1).PowInt(periods))
+}

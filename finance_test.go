@@ -78,6 +78,14 @@ func ExampleFutureValueAnnuityDue() {
 	// Output: 5801.91
 }
 
+func ExampleDeflate() {
+	amount := New(1000) // £1000
+	years := 20         // in 20 years
+	inflation := Pm(25) // with 2.5% inflation p.a.
+	fmt.Printf("%.2f", Deflate(amount, inflation, years))
+	// Output: 610.27
+}
+
 func TestEffectiveToPeriodicRate(t *testing.T) {
 	principle := New(10000)
 	annual := Pc(10)
