@@ -97,10 +97,11 @@ func TestDecimalFormat(t *testing.T) {
 		{"%5.2f", decr(1, 0), " 1.00"},
 		{"%.2c", Decimal{}, "0.00%"},
 		{"%10.2c", decr(1, 0), "    100.00%"},
+		{"%.2c", decr(101, -1), "101000.00%"},
 	} {
 		got := fmt.Sprintf(tc.fs, tc.d)
 		if got != tc.want {
-			t.Errorf("%d\n got: %v\nwant: %v\n", i, got, tc.want)
+			t.Errorf("\n#%d\n got: %v\nwant: %v\n", i, got, tc.want)
 		}
 	}
 }

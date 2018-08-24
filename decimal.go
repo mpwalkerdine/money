@@ -61,26 +61,28 @@ func Bp(v int64) Decimal { return decr(v, 4) }
 // %c will multiply by 100, use %f and append '%'.
 // If a precision is requested for negative scale decimals, these are appended.
 func (d Decimal) Format(s fmt.State, c rune) {
-	if d.value == nil || d.value.Cmp(zero()) == 0 {
+	if d.value == nil || d.value.Sign() == 0 {
 		// Handle special-case zero, we don't want Go operating mode treatment.
 		d.value = new(eld.Big)
+	} else {
+		// Copy to manipulate
+		d.value = zero().Copy(d.value)
 	}
 
 	if c == 'c' {
 		defer fmt.Fprint(s, "%")
-		pc := new(eld.Big)
-		d.value = pc.Set(d.value).Mul(pc, eld.New(100, 0))
+		d.value.Mul(d.value, eld.New(100, 0))
 	}
 
 	if strings.ContainsRune("vdc", c) {
 		c = 'f'
 	}
 
-	d.value.Format(s, c)
-
-	if prec, hasPrec := s.Precision(); hasPrec && d.value.Scale() < 0 {
-		fmt.Fprintf(s, ".%s", strings.Repeat("0", prec))
+	if prec, hasPrec := s.Precision(); hasPrec && d.value.Scale() < prec {
+		d.value.Quantize(prec)
 	}
+
+	d.value.Format(s, c)
 }
 
 // Equals returns true if the two numbers represent the same value.
