@@ -42,6 +42,18 @@ func ExampleDecimal_Equals() {
 	// Output: true
 }
 
+func ExampleDecimal_EqualTo() {
+	a := NewCents(101)
+	b := NewCents(100)
+	fmt.Println(a.EqualTo(b, 1))
+	fmt.Println(a.EqualTo(b, 2))
+	fmt.Println(a.EqualTo(b, 3))
+	// Output:
+	// true
+	// true
+	// false
+}
+
 func ExampleDecimal_LessThan() {
 	fmt.Print(New(1).LessThan(NewCents(100)))
 	// Output: false
@@ -103,5 +115,29 @@ func TestDecimalFormat(t *testing.T) {
 		if got != tc.want {
 			t.Errorf("\n#%d\n got: %v\nwant: %v\n", i, got, tc.want)
 		}
+	}
+}
+
+func TestDecimal_EqualTo(t *testing.T) {
+	for i, tc := range []struct {
+		a, b Decimal
+		sf   int
+		want bool
+	}{
+		{New(0), New(0), 1, true},
+		{New(1), New(0), 1, false},
+		{NewCents(100), New(1), 3, true},
+		{NewScalar(123, 2), NewScalar(123, 3), 3, false},
+		{NewScalar(1230, 1), NewScalar(123, 0), 3, true},
+		{NewScalar(123, -1), NewScalar(1230, 0), 3, true},
+	} {
+		tc := tc
+		t.Run(fmt.Sprintf("#%d %v equals %v [%d sf]", i, tc.a, tc.b, tc.sf), func(t *testing.T) {
+			t.Parallel()
+			got := tc.a.EqualTo(tc.b, tc.sf)
+			if got != tc.want {
+				t.Errorf("wanted %t, got %t", tc.want, got)
+			}
+		})
 	}
 }

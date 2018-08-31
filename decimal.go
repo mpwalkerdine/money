@@ -90,6 +90,13 @@ func (d Decimal) Equals(other Decimal) bool {
 	return !d.value.IsNaN(0) && !other.value.IsNaN(0) && d.value.Cmp(other.value) == 0
 }
 
+// EqualTo returns true if two numbers are equal to the specified significant figures.
+func (d Decimal) EqualTo(other Decimal, sigfigs int) bool {
+	a := zero().Copy(d.value).Round(sigfigs)
+	b := zero().Copy(other.value).Round(sigfigs)
+	return a.Sub(a, b).Sign() == 0
+}
+
 // LessThan than returns true if the receiver is less than the argument.
 func (d Decimal) LessThan(other Decimal) bool {
 	v, o := d.value, other.value
