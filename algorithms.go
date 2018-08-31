@@ -11,51 +11,72 @@ var (
 	half   = wrap(zero().SetMantScale(5, 1))
 )
 
-// GoalSeek attempts to find a value x (to the specified precision), such that f(x) = target,
-// using initial as a starting point.
-func GoalSeek(initial, target Decimal, precision int, f func(Decimal) Decimal) (Decimal, bool) {
-	// Translate target to zero g(x) = f(x) - target = 0
+// GoalSeek attempts to find a value x (to the specified precision), where min <= x <= max,
+// such that f(x) = target.
+func GoalSeek(min, max, target Decimal, precision int, f func(Decimal) Decimal) (Decimal, bool) {
+	// Translate target to zero i.e. g(x) = f(x) - target = 0
 	g := func(x Decimal) Decimal {
 		return f(x).Sub(target)
 	}
 
-	// Maybe we got lucky
-	if g(initial).value.Sign() == 0 {
-		return initial, true
+	// min is a solution
+	if g(min).value.Sign() == 0 {
+		return min, true
 	}
 
-	left, right, ok := bracket(initial, g)
+	// max is a solution
+	if g(max).value.Sign() == 0 {
+		return max, true
+	}
+
+	// Find zero-crossing bracket
+	left, right, ok := bracket(min, max, precision, g)
 
 	// No solutions
 	if !ok {
-		return initial, false
+		return wrap(zero()), false
 	}
 
+	// left bracket is a solution
+	if g(left).value.Sign() == 0 {
+		return left, true
+	}
+
+	// right bracket is a solution
+	if g(right).value.Sign() == 0 {
+		return right, true
+	}
+
+	// bisect the bracket to find the solution
 	result, found := bisect(left, right, precision, g)
 
 	return result, found
 }
 
-func bracket(initial Decimal, g func(Decimal) Decimal) (Decimal, Decimal, bool) {
-	guessSign := g(initial).value.Signbit()
+func bracket(min, max Decimal, precision int, g func(Decimal) Decimal) (Decimal, Decimal, bool) {
+	// Sweep left to right in smaller and smaller increments until a bracket is found
+	// or the values from g are identical to a given precision, then give up.
+	inc := max.Sub(min)
 
-	// Find a bracket by expanding outwards from initial in 0.1, 1, 10, etc. increments
-	var left, right = initial, initial
-	for i := NewScalar(1, 1); minVal.LessThan(left) || right.LessThan(maxVal); i = i.Mul(ten) {
-		right = initial.Add(i)
-		if g(right).value.Signbit() != guessSign {
-			left = initial
-			return left, right, true
-		}
+	for {
+		for left := min; left.LessThan(max); left = left.Add(inc) {
+			right := left.Add(inc)
+			gleft, gright := g(left), g(right)
+			leftSign := gleft.value.Signbit()
+			rightSign := gright.value.Signbit()
 
-		left = initial.Sub(i)
-		if g(left).value.Signbit() != guessSign {
-			right = initial
-			return left, right, true
+			// zero-crossing
+			if leftSign != rightSign {
+				return left, right, true
+			}
+
+			// still no crossings but values are now the same, give up
+			if left.EqualTo(right, precision) && gleft.EqualTo(gright, precision) {
+				return min, max, false
+			}
 		}
+		inc = inc.Mul(half)
 	}
-
-	return initial, initial, false
 }
 
 func bisect(left, right Decimal, prec int, g func(Decimal) Decimal) (Decimal, bool) {
@@ -76,7 +97,7 @@ func bisect(left, right Decimal, prec int, g func(Decimal) Decimal) (Decimal, bo
 			right = mid
 		}
 
-		if test.value.Sub(right.value, left.value).SetScale(test.value.Scale()-prec).Quantize(prec).Sign() == 0 {
+		if left.EqualTo(right, prec) {
 			left.value.Round(prec)
 			return left, true
 		}
